@@ -1,0 +1,245 @@
+/* GENEL SIFIRLAMA VE FONT */
+body {
+    font-family: 'Inter', sans-serif; /* Apple'a benzeyen temiz font */
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7; /* Hafif kırık beyaz */
+    color: #1D1D1F; /* Koyu Gri Metin */
+    line-height: 1.6;
+}
+h1, h2, h3 {
+    font-weight: 700; /* Kalın Başlıklar */
+    color: #000;
+    margin-top: 0;
+}
+
+/* HERO ALANI STİLİ */
+.hero-section {
+    padding: 100px 5% 50px;
+    background-color: #FFFFFF; /* Saf Beyaz Arka Plan */
+    text-align: center;
+}
+.hero-title {
+    font-size: 3.5rem; 
+    max-width: 800px;
+    margin: 0 auto 20px;
+}
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #555;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+/* GÖRSEL %50 GENİŞLİKTE VE DİNAMİK HAREKET */
+.main-image {
+    max-width: 50%; /* Burası %50 olarak ayarlandı */
+    height: auto;
+    margin-top: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease-in-out, box-shadow 0.3s;
+}
+.main-image:hover {
+    transform: translateX(10px); /* Üzerine gelindiğinde 10px sağa kayar */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); 
+}
+
+/* BUTONLAR (CTA) STİLİ */
+.cta-group {
+    margin-bottom: 40px;
+}
+.cta-button {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+}
+.primary {
+    background-color: #007aff; /* Apple Mavi */
+    color: white;
+    border: none;
+}
+.primary:hover {
+    background-color: #005bb5; /* Hover'da daha koyu mavi */
+}
+.secondary {
+    background-color: #fff;
+    color: #007aff;
+    border: 1px solid #007aff;
+}
+.secondary:hover {
+    background-color: #f0f0f0;
+}
+.large {
+    padding: 15px 35px;
+    font-size: 1.2rem;
+}
+
+/* ÖZELLİKLER ALANI */
+.features-section {
+    padding: 80px 5%;
+    text-align: center;
+}
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 50px;
+}
+.feature-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+}
+.feature-item {
+    background-color: #FFFFFF;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 1;
+    min-width: 250px;
+    text-align: left;
+}
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+.feature-item h3 {
+    color: #007aff;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+/* FİYAT ALANI */
+.price-cta {
+    padding: 60px 5%;
+    background-color: #EFEFEF;
+    text-align: center;
+    margin-top: 50px;
+}
+.price-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+.price-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* YENİ BÖLÜM: CHATBOT DEMO STİLİ */
+.chatbot-demo-section {
+    padding: 80px 5%;
+    background-color: #FFFFFF;
+    text-align: center;
+}
+
+.demo-title {
+    font-size: 2rem;
+    color: #007aff;
+    margin-bottom: 20px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px 20px 0 20px;
+    background-color: #f0f0f0; 
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    min-height: 350px;
+    overflow-y: auto; /* Mesaj akışını kaydırılabilir yapar */
+}
+/* Yeni girdi alanı stil ayarları */
+.input-area {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+    border-top: 1px solid #eee;
+}
+#user-input {
+    flex-grow: 1;
+    padding: 12px;
+    border: none;
+    font-size: 1rem;
+    outline: none; /* Odaklanmada çerçeveyi kaldırır */
+}
+.send-button {
+    cursor: pointer;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    transition: opacity 0.2s;
+    /* Düğme stilleri primary sınıfından gelir */
+}
+
+/* MESAJ STİLLERİ */
+.message {
+    padding: 10px 15px;
+    border-radius: 18px; 
+    margin: 8px 0;
+    max-width: 80%;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.bot-message {
+    background-color: #FFFFFF;
+    color: #1D1D1F;
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px; /* Konuşma balonu ucu */
+}
+
+.user-message {
+    background-color: #007aff;
+    color: white;
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px; /* Konuşma balonu ucu */
+}
+
+
+/* FOOTER */
+.footer {
+    padding: 20px 5%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+}
+
+/* MOBİL UYUMLULUK */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    .main-image {
+        max-width: 80%;
+    }
+    .feature-grid {
+        flex-direction: column;
+    }
+    .feature-item {
+        min-width: 100%;
+        margin-bottom: 20px;
+    }
+    .cta-button {
+        display: block;
+        margin: 10px auto;
+    }
+    .chat-container, .input-area {
+        max-width: 100%; /* Mobil cihazda tam genişlik kullan */
+    }
+}
