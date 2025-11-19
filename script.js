@@ -1,8 +1,8 @@
 // KRİTİK: BURAYA SADECE WEB SİTESİ İÇİN OLUŞTURULAN YENİ N8N WEBHOOK ADRESİNİ YAZIN
-const N8N_WEBHOOK_URL_DEMO = "http://13.49.240.114:5678/webhook/18f2d60f-60d9-46f3-8bdf-10c3464d2b7f"; 
+const N8N_WEBHOOK_URL_DEMO = "http://13.49.240.114:5678/webhook/18f2d60f-60d9-46f3-8bdf-10c3464d2b7f"; // HTTP/HTTPS kontrolü yapın!
 
 const TEST_PHONE_WEB = "WEB_VISITOR_999@c.us"; // N8N'in beklediği format
-const customerNameWeb = "Web Ziyaretçisi"; 
+const customerNameWeb = "Web Ziyaretçisi";
 
 const messagesArea = document.getElementById('messages-area');
 const userInput = document.getElementById('user-input');
@@ -17,7 +17,7 @@ userInput.addEventListener('keydown', function(e) {
 
 // Sayfa yüklendiğinde en alta kaydır
 window.onload = function() {
-    messagesArea.scrollTop = messagesArea.scrollHeight; 
+    messagesArea.scrollTop = messagesArea.scrollHeight;
 };
 
 // Mesajı gönderme ve ekranda gösterme fonksiyonu
@@ -39,10 +39,10 @@ async function sendMessage() {
             body: {
                 from: TEST_PHONE_WEB,
                 message: messageText,
-                businessName: customerNameWeb 
+                businessName: customerNameWeb
             },
         };
-        
+
         // Webhook POST isteğini gönderme
         const response = await fetch(N8N_WEBHOOK_URL_DEMO, {
             method: 'POST',
@@ -55,10 +55,10 @@ async function sendMessage() {
         // 3. N8N'den Gelen Yanıtı İşleme
         if (response.ok) {
             const data = await response.json();
-            
-            // N8N'den gelen yanıt (muhtemelen JSON.stringified)
-            let replyText = data.reply ? JSON.parse(data.reply) : "⚠️ N8N'den geçerli yanıt gelmedi.";
-            
+
+            // JSON.parse() kaldırıldı. N8N'den gelen metin doğrudan alınıyor.
+            let replyText = data.reply ? data.reply : "⚠️ N8N'den geçerli yanıt gelmedi.";
+
             // Yanıtı ekranda göster
             updateMessageInChat(botResponseDiv, replyText);
 
@@ -78,16 +78,55 @@ async function sendMessage() {
 function addMessageToChat(text, className) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message ' + className;
-    messageDiv.textContent = text;
+    
+    let contentHTML = '';
+
+    // BOT MESAJI ise ikonu ekle
+    if (className.includes('bot-message')) {
+        // Font Awesome Robot İkonu
+        const botIcon = '<div class="bot-icon"><i class="fas fa-robot"></i></div>';
+        const messageContent = `<div class="bot-message-content">${text}</div>`;
+        contentHTML = botIcon + messageContent;
+        
+        // İlk mesajın (hoş geldiniz mesajının) içeriğini doğru ayarlamak için
+        if(className.includes('initial-message')){
+             messageDiv.innerHTML = botIcon + `<div class="bot-message-content">${text}</div>`;
+             messagesArea.appendChild(messageDiv);
+             messagesArea.scrollTop = messagesArea.scrollHeight;
+             return messageDiv;
+        }
+
+    } else {
+        // KULLANICI MESAJI ise sadece metni kullan
+        contentHTML = text;
+    }
+    
+    // Mesaj içeriğini yerleştir
+    messageDiv.innerHTML = contentHTML;
     messagesArea.appendChild(messageDiv);
+    
     // En alta kaydır
-    messagesArea.scrollTop = messagesArea.scrollHeight; 
+    messagesArea.scrollTop = messagesArea.scrollHeight;
     return messageDiv;
 }
 
 // Mesaj içeriğini güncelleyen yardımcı fonksiyon
 function updateMessageInChat(div, newText) {
-    div.textContent = newText;
+    // İYİLEŞTİRME: Botun yanıtındaki **bold** metinleri HTML olarak işler.
+    const htmlContent = newText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Eğer bot mesajıysa, ikonu koruyarak sadece içeriği güncelleriz
+    if (div.classList.contains('bot-message')) {
+        // İkonu al
+        const botIcon = '<div class="bot-icon"><i class="fas fa-robot"></i></div>';
+        
+        // İçerik kısmını güncelle
+        div.innerHTML = botIcon + `<div class="bot-message-content">${htmlContent}</div>`;
+    } else {
+        // Kullanıcı mesajıysa direkt metni koyar
+        div.innerHTML = htmlContent;
+    }
+
     div.classList.remove('loading');
     messagesArea.scrollTop = messagesArea.scrollHeight;
 }

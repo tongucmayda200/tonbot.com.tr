@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TonBot AI - 7/24 Randevu Asistanınız</title>
     
+    <link rel="icon" type="image/png" href="logo.png">
+    
     <link rel="stylesheet" href="Style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
@@ -43,24 +46,28 @@
     </section>
 
     <section class="price-cta">
-        <h2 class="price-title">AYLIK SADECE 1000 TL.</h2>
+        <h2 class="price-title">AYLIK SADECE 1000 TL</h2>
         <p class="price-subtitle">Yapay Zeka otomasyon gücüne hemen bugün sahip olun.</p>
         
         <a href="https://api.whatsapp.com/send?phone=905535696777&text=%20Merhaba!%20Bunun%20hakk%C4%B1nda%20daha%20faza%20bilgi%20alabilir%20miyim%3F" class="cta-button primary large">TONBOT HİZMETİNİ SATIN ALIN</a>
     </section>
 
     <section class="chatbot-demo-section">
-        <h2 class="section-title demo-title">BOTU SİMDİ ÜCRETSİZ DENEYİN! .</h2>
-        <div class="chat-container">
-            <div class="message bot-message" style="margin-top: 15px;">
-                Merhaba! Ben TonBot AI. Webhook bağlantımız hazır. Lütfen bir mesaj yazın.
+        <h2 class="section-title demo-title">BOTU SİMDİ ÜCRETSİZ DENEYİN! </h2>
+        
+        <div class="chat-wrapper">
+            <div class="chat-container">
+                <div class="message bot-message initial-message" style="margin-top: 15px;">
+                    Merhaba! Ben TonBot AI. Randedvuları ayarlar müşterinle ilgilirim bana mesaj gönder.
+                </div>
+                <div id="messages-area" style="flex-grow: 1;"></div>
             </div>
-            <div id="messages-area" style="flex-grow: 1;"></div>
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Mesajınızı buraya yazın...">
+                <button onclick="sendMessage()" class="send-button primary">GÖNDER</button>
+            </div>
         </div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Mesajınızı buraya yazın...">
-            <button onclick="sendMessage()" class="send-button primary">GÖNDER</button>
-        </div>
+        
     </section>
 
     <footer class="footer">
