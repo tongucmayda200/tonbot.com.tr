@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TonBot | Akıllı WhatsApp Asistanı</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Style.css">
+
+    <style>
+        /* --- GENEL AYARLAR --- */
+        :root {
+            --primary: #007aff;
+            --primary-dark: #005ecb;
+            --text-dark: #1d1d1f;
+            --text-grey: #86868b;
+            --bg-light: #fbfbfd;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0;
+            background-color: var(--bg-light); color: var(--text-dark);
+            padding-top: 80px; line-height: 1.5; overflow-x: hidden;
+        }
+
+        h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
+        a { text-decoration: none; }
+        html { scroll-behavior: smooth; }
+
+        /* --- YAPIŞKAN MENÜ --- */
+        .sticky-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; box-shadow: 0 1px 0px rgba(0,0,0,0.05);
+            z-index: 1000; box-sizing: border-box;
+        }
+
+        .brand-logo {
+            font-size: 1.8rem; font-weight: 800; color: var(--text-dark);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .logo-dot {
+            display: inline-block; width: 10px; height: 10px;
+            background-color: #25D366; border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .nav-buttons { display: flex; gap: 15px; align-items: center; }
+        
+        .btn {
+            padding: 10px 24px; border-radius: 50px; font-size: 0.95rem; font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; display: inline-block;
+        }
+        .btn-text { color: var(--text-dark); } .btn-text:hover { color: var(--primary); background: rgba(0,122,255,0.05); }
+        .btn-outline { border: 1px solid #d2d2d7; color: var(--text-dark); background: transparent; } 
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+        .btn-primary {
+            background: linear-gradient(135deg, #007aff, #0062cc); color: white; border: none;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 122, 255, 0.5); }
+
+        @media (max-width: 768px) { 
+            .btn-outline { display: none; } 
+            .brand-logo { font-size: 1.5rem; }
+            .sticky-header { padding: 0 20px; }
+        }
+
+        /* --- HERO BÖLÜMÜ --- */
+        .hero-section {
+            text-align: center; padding: 100px 20px 80px;
+            background: radial-gradient(circle at 50% 0%, #f0f8ff 0%, #fbfbfd 60%);
+            overflow: hidden;
+        }
+        .hero-tag {
+            background: rgba(0, 122, 255, 0.08); color: var(--primary);
+            padding: 8px 20px; border-radius: 30px; font-size: 0.9rem; font-weight: 600;
+            margin-bottom: 24px; display: inline-block;
+            border: 1px solid rgba(0, 122, 255, 0.1);
+        }
+        .hero-title {
+            font-size: 4.5rem; font-weight: 800; line-height: 1.05; margin-bottom: 24px; color: #111;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #007aff, #00c6ff, #007aff);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .hero-subtitle {
+            font-size: 1.35rem; color: var(--text-grey); max-width: 640px; margin: 0 auto 40px; font-weight: 400; line-height: 1.6;
+        }
+        .cta-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 80px; }
+        .btn-large { padding: 18px 45px; font-size: 1.15rem; }
+
+        /* GÖRSEL ALANI */
+        .hero-image-container {
+            width: 100%; display: flex; justify-content: center; position: relative; z-index: 1;
+        }
+        .hero-image-wrapper {
+            width: 90%; max-width: 1100px; border-radius: 24px; background: #fff; padding: 12px;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            line-height: 0; font-size: 0;
+        }
+        .main-image { width: 100%; display: block; height: auto; border-radius: 16px; vertical-align: middle; }
+
+        /* --- ÖZELLİKLER --- */
+        .features-section { padding: 120px 5%; background: white; position: relative; }
+        .section-title { font-size: 2.8rem; text-align: center; margin-bottom: 70px; font-weight: 800; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
+        .feature-item { padding: 45px; border-radius: 28px; background: #f9f9fb; transition: all 0.3s ease; border: 1px solid transparent; }
+        .feature-item:hover { background: white; transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.08); border-color: rgba(0, 122, 255, 0.1); }
+        .feature-icon-box {
+            width: 70px; height: 70px; background: linear-gradient(135deg, #e6f0ff, #cce0ff);
+            border-radius: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;
+        }
+        .feature-icon { font-size: 2.2rem; }
+        .feature-item h3 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 700; }
+        .feature-item p { color: var(--text-grey); font-size: 1.05rem; line-height: 1.6; }
+
+        /* --- DEMO ALANI --- */
+        .demo-section { padding: 100px 20px; background: #f5f5f7; text-align: center; }
+        .phone-frame {
+            width: 100%; max-width: 380px; margin: 50px auto 0; background: #fff; border-radius: 45px; border: 12px solid #1c1c1e;
+            overflow: hidden; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.2), 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .wa-header { background: #075E54; padding: 16px 20px; display: flex; align-items: center; color: white; text-align: left; }
+        .wa-avatar { width: 42px; height: 42px; background: #fff; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .wa-name { font-weight: 600; font-size: 1.05rem; display: block; }
+        .wa-status { font-size: 0.8rem; opacity: 0.85; }
+        .chat-box { height: 420px; background: #efe7dd url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: left; }
+        .msg-in { background: white; align-self: flex-start; border-top-left-radius: 2px; color: #111; }
+        .msg-out { background: #dcf8c6; align-self: flex-end; border-top-right-radius: 2px; color: #111; }
+        .msg-time { font-size: 0.7rem; color: #999; float: right; margin-top: 6px; margin-left: 10px; }
+        .quick-actions { padding: 12px; background: #f0f0f0; display: flex; gap: 10px; overflow-x: auto; justify-content: center; }
+        .chip { background: white; padding: 10px 18px; border-radius: 20px; font-size: 0.9rem; color: #075E54; border: 1px solid #ddd; cursor: pointer; white-space: nowrap; transition: 0.2s; font-weight: 500; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chip:hover { background: #dcf8c6; border-color: #dcf8c6; transform: translateY(-2px); }
+        .chat-input-area { padding: 12px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; border-top: 1px solid #ddd; }
+        .chat-input { flex: 1; padding: 12px 18px; border-radius: 25px; border: none; outline: none; font-size: 1rem; background: white; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+        .chat-send { background: #008069; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(7, 94, 84, 0.3); transition: 0.2s;}
+        .chat-send:hover { transform: scale(1.05); }
+
+        /* --- FOOTER --- */
+        .footer-cta { padding: 120px 20px; text-align: center; background: white; position: relative; z-index: 1;}
+        .footer-cta h2 { font-size: 3rem; margin-bottom: 20px; font-weight: 800; }
+        .footer-cta p { font-size: 1.3rem; color: var(--text-grey); margin-bottom: 50px; }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-image-wrapper { margin: 0 20px; }
+            .cta-group { flex-direction: column; gap: 15px; }
+            .btn-large { width: 100%; box-sizing: border-box; }
+            .section-title { font-size: 2.2rem; }
+            .footer-cta h2 { font-size: 2.2rem; }
+        }
+        
+        /* --- YENİ LEGAL LİNKLER STİLİ --- */
+        .legal-links { 
+            margin-top: 15px; 
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .legal-links a {
+            color: #666;
+            transition: 0.2s;
+        }
+        .legal-links a:hover {
+            color: #007aff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky-header">
+        <a href="#" class="brand-logo">
+            <span class="logo-dot"></span> TonBot
+        </a>
+        <div class="nav-buttons">
+            <a href="login.html" class="btn btn-text">Giriş Yap</a>
+            <a href="pricing.html" class="btn btn-outline">Paketler</a>
+            <a href="pricing.html" class="btn btn-primary">Ücretsiz Dene</a>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <span class="hero-tag">✨ Yapay Zeka Destekli Satış</span>
+        <h1 class="hero-title">
+            WhatsApp Müşterilerinizi <br>
+            <span class="gradient-text">Otopilota Alın</span>
+        </h1>
+        <p class="hero-subtitle">
+            Kod bilmenize gerek yok. Telefonunuzu okutun, yapay zeka müşterilerinize 7/24 cevap versin ve satış yapsın.
+        </p>
+        
+        <div class="cta-group">
+            <a href="pricing.html" class="btn btn-primary btn-large">Hemen Başla</a>
+            <a href="#demo" class="btn btn-outline btn-large">Demoyu İncele</a>
+        </div>
+
+        <div class="hero-image-container">
+            <div class="hero-image-wrapper">
+                <img src="anafoto.png" class="main-image" alt="TonBot Dashboard">
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Neden Herkes TonBot Kullanıyor?</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <span class="feature-icon">⚡</span>
+                </div>
+                <h3>10 Saniyede Kurulum</h3>
+                <p>Karışık API ayarları yok. Sadece QR kodunu okutuyorsunuz ve botunuz anında aktif oluyor.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <span class="feature-icon">🧠</span>
+                </div>
+                <h3>Akıllı Satış</h3>
+                <p>Ürünlerinizi sisteme girin. Yapay zeka müşterilerinize doğru ürünü önerip linkini atsın.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box">
+                    <span class="feature-icon">🌍</span>
+                </div>
+                <h3>Global ve Sınırsız</h3>
+                <p>Botunuz her dilde konuşabilir. 7/24 uyumayan bir satış temsilcisi kiralayın.</p>
+            </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo-section">
+        <h2 class="section-title">Botun Hızını Test Edin</h2>
+        <p style="margin-bottom: 30px; color: #666; font-size: 1.1rem;">Aşağıdaki hazır sorulara tıklayın ve hızı görün.</p>
+
+        <div class="phone-frame">
+            <div class="wa-header">
+                <div class="wa-avatar">🤖</div>
+                <div>
+                    <span class="wa-name">TonBot AI</span>
+                    <span class="wa-status" id="bot-status">Çevrimiçi</span>
+                </div>
+            </div>
+
+            <div class="chat-box" id="chat-container">
+                <div class="msg msg-in">
+                    Merhaba! Ben TonBot. Size nasıl yardımcı olabilirim? 👋
+                    <span class="msg-time">10:00</span>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <div class="chip" onclick="sendDemo('Fiyatlar nedir? 💰')">Fiyatlar nedir? 💰</div>
+                <div class="chip" onclick="sendDemo('Nasıl kurulur? ⚙️')">Nasıl kurulur? ⚙️</div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="demo-input" placeholder="Mesaj yazın...">
+                <button class="chat-send" onclick="sendDemo()">➤</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="footer-cta">
+        <h2>İşinizi Büyütmeye Hazır mısınız?</h2>
+        <p>7 gün ücretsiz deneyin. Hemen hesabınızı oluşturun.</p>
+        <a href="pricing.html" class="btn btn-primary btn-large">Hesap Oluştur</a>
+    </section>
+
+    <footer style="text-align:center; padding:50px 20px; color:#999; font-size:0.95rem; background: #fbfbfd; border-top: 1px solid #eaeaea;">
+        <p style="margin: 5px 0;">&copy; 2025 TonBot AI. Tüm hakları saklıdır.</p>
+        <div class="legal-links">
+            <a href="privacy.html">Gizlilik Politikası</a> • <a href="terms.html">Hizmet Şartları</a>
+        </div>
+    </footer>
+
+    <script>
+        function sendDemo(text = null) {
+            const input = document.getElementById('demo-input');
+            const chatBox = document.getElementById('chat-container');
+            const status = document.getElementById('bot-status');
+            
+            const msgText = text || input.value;
+            if(!msgText.trim()) return;
+
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            chatBox.innerHTML += `<div class="msg msg-out">${msgText}<span class="msg-time">${time} ✓✓</span></div>`;
+            
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            status.innerText = 'yazıyor...';
+
+            setTimeout(() => {
+                status.innerText = 'Çevrimiçi';
+                let reply = "Bu bir demo! Gerçek botunuz çok daha zeki olacak. 😉";
+                
+                if(msgText.includes("Fiyat")) reply = "Paketlerimiz aylık sadece <strong>19$</strong>'dan başlıyor. 🚀";
+                if(msgText.includes("kurulur")) reply = "Çok basit! Sadece QR kodu okutuyorsunuz. 10 saniyede hazır.";
+
+                chatBox.innerHTML += `<div class="msg msg-in">${reply}<span class="msg-time">${time}</span></div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1200);
+        }
+
+        document.getElementById('demo-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendDemo();
+        });
+    </script>
+
+</body>
+</html>
