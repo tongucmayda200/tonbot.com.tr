@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planlar ve Fiyatlar - TonBot</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="Style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GENEL AYARLAR --- */
+        :root {
+            --primary: #007aff;
+            --text-dark: #1d1d1f;
+            --text-grey: #86868b;
+            --bg-light: #f5f5f7;
+            --card-bg: #ffffff;
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Inter', sans-serif; 
+            padding-top: 80px; 
+            color: var(--text-dark);
+        }
+
+        /* NAVBAR */
+        nav { 
+            padding: 0 5%; height: 80px; display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .brand-logo {
+            font-size: 1.5rem; font-weight: 800; color: #1D1D1F; text-decoration: none;
+            letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;
+        }
+        .logo-dot {
+            display: inline-block; width: 10px; height: 10px; background-color: #25D366; 
+            border-radius: 50%; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+
+        .nav-btn { 
+            background: #e8e8ed; color: #1d1d1f; padding: 8px 20px; border-radius: 50px; 
+            text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.2s; 
+        }
+        .nav-btn:hover { background: #d2d2d7; }
+
+        /* HEADER */
+        .pricing-header { text-align: center; margin: 60px 0 50px; padding: 0 20px; }
+        .pricing-header h1 { font-size: 3rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px; }
+        .pricing-header p { font-size: 1.2rem; color: var(--text-grey); max-width: 600px; margin: 0 auto; font-weight: 400; }
+
+        /* KART KONTEYNER (GÜNCELLENDİ: Yan yana sığdırmak için) */
+        .pricing-container {
+            display: flex; 
+            justify-content: center; 
+            align-items: stretch; 
+            gap: 20px; /* Boşluğu azalttık */
+            max-width: 1200px; 
+            margin: 0 auto 100px; 
+            padding: 0 20px; 
+            flex-wrap: wrap; /* Sadece çok küçük ekranda aşağı düşsün */
+        }
+
+        /* KART TASARIMI (GÜNCELLENDİ: Genişlik optimize edildi) */
+        .price-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 35px; /* İç boşluk biraz kısıldı */
+            width: 300px; /* Genişlik 350px'den 300px'e düşürüldü */
+            min-width: 280px; /* Mobilde çok küçülmesin */
+            display: flex; flex-direction: column;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+
+        /* POPÜLER KART */
+        .popular { 
+            border: 2px solid var(--primary); 
+            box-shadow: 0 15px 40px rgba(0, 122, 255, 0.15); 
+            z-index: 2; 
+            transform: scale(1.05); 
+        }
+        .popular:hover { transform: scale(1.05) translateY(-10px); }
+
+        .badge {
+            background: var(--primary); color: white; padding: 6px 16px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; position: absolute; top: -16px; left: 50%;
+            transform: translateX(-50%); text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3); white-space: nowrap;
+        }
+
+        /* İÇERİK */
+        .plan-name { font-size: 1.1rem; font-weight: 600; color: var(--text-grey); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .price-area { display: flex; align-items: baseline; justify-content: center; margin-bottom: 25px; }
+        .currency { font-size: 1.8rem; font-weight: 600; vertical-align: top; margin-right: 4px; }
+        .amount { font-size: 3.5rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
+        .period { font-size: 1rem; color: var(--text-grey); margin-left: 5px; }
+
+        .divider { height: 1px; background: #f0f0f0; margin: 0 0 25px; }
+
+        /* LİSTE */
+        .features { list-style: none; padding: 0; margin: 0; flex-grow: 1; text-align: left; }
+        .features li { margin-bottom: 15px; font-size: 0.95rem; color: #333; display: flex; align-items: center; gap: 10px; }
+        
+        .icon-check { 
+            width: 20px; height: 20px; background: #eef7ff; color: var(--primary); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 0.8rem; font-weight: bold; flex-shrink: 0; 
+        }
+        .icon-cross { 
+            width: 20px; height: 20px; background: #f5f5f7; color: #ccc; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 0.8rem; flex-shrink: 0; 
+        }
+        .disabled { color: #999; text-decoration: line-through; opacity: 0.6; }
+
+        /* BUTONLAR */
+        .btn-select {
+            margin-top: 30px; width: 100%; padding: 14px; border-radius: 50px; 
+            font-weight: 600; font-size: 1rem; text-decoration: none; text-align: center;
+            transition: 0.2s; box-sizing: border-box;
+        }
+        .btn-outline { border: 1px solid #d2d2d7; color: var(--text-dark); background: transparent; }
+        .btn-outline:hover { border-color: var(--text-dark); background: var(--text-dark); color: white; }
+        
+        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.25); }
+        .btn-primary:hover { background: #005ecb; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 122, 255, 0.35); }
+
+        /* MOBİL UYUMLULUK */
+        @media (max-width: 950px) {
+            .pricing-container { flex-direction: column; align-items: center; gap: 40px; }
+            .price-card { width: 100%; max-width: 380px; }
+            .popular { transform: scale(1); border-width: 2px; }
+            .popular:hover { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="brand-logo">
+            <span class="logo-dot"></span> TonBot
+        </a>
+        <a href="login.html" class="nav-btn">Giriş Yap</a>
+    </nav>
+
+    <div class="pricing-header">
+        <h1>Fiyatlandırma</h1>
+        <p>İşletmenizin büyüklüğüne göre en mantıklı planı seçin.</p>
+    </div>
+
+    <div class="pricing-container">
+        
+        <div class="price-card">
+            <div class="plan-name">Başlangıç</div>
+            <div class="price-area">
+                <span class="currency">$</span><span class="amount">20</span><span class="period">/ay</span>
+            </div>
+            <div class="divider"></div>
+            <ul class="features">
+                <li><span class="icon-check">✓</span> 1 WhatsApp Numarası</li>
+                <li><span class="icon-check">✓</span> Günlük 500 Mesaj</li>
+                <li><span class="icon-check">✓</span> Temel Yapay Zeka</li>
+                <li><span class="icon-check">✓</span> Katalog & Link Satışı 🛍️</li>
+                <li class="disabled"><span class="icon-cross">×</span> Öncelikli Destek</li>
+            </ul>
+            <a href="login.html?plan=starter" class="btn-select btn-outline">Seç</a>
+        </div>
+
+        <div class="price-card popular">
+            <div class="badge">En Çok Tercih Edilen</div>
+            <div class="plan-name" style="color:#007aff;">Pro</div>
+            <div class="price-area">
+                <span class="currency">$</span><span class="amount">50</span><span class="period">/ay</span>
+            </div>
+            <div class="divider"></div>
+            <ul class="features">
+                <li><span class="icon-check">✓</span> <strong>1 WhatsApp Numarası</strong></li>
+                <li><span class="icon-check">✓</span> <strong>Sınırsız</strong> Mesaj</li>
+                <li><span class="icon-check">✓</span> <strong>Gelişmiş AI (Gemini)</strong></li>
+                <li><span class="icon-check">✓</span> Katalog & Link Satışı 🛍️</li>
+                <li><span class="icon-check">✓</span> 7/24 Öncelikli Destek</li>
+            </ul>
+            <a href="login.html?plan=pro" class="btn-select btn-primary">Hemen Başla</a>
+        </div>
+
+        <div class="price-card">
+            <div class="plan-name">Ajans</div>
+            <div class="price-area">
+                <span class="currency">$</span><span class="amount">100</span><span class="period">/ay</span>
+            </div>
+            <div class="divider"></div>
+            <ul class="features">
+                <li><span class="icon-check">✓</span> <strong>5 WhatsApp Numarası</strong></li>
+                <li><span class="icon-check">✓</span> Sınırsız Mesaj</li>
+                <li><span class="icon-check">✓</span> Tüm Pro Özellikler</li>
+                <li><span class="icon-check">✓</span> White Label (Logonuz)</li>
+                
+            </ul>
+            <a href="login.html?plan=agency" class="btn-select btn-outline">Ajans Ol</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

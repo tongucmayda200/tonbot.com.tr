@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - TonBot</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* --- STİLLER --- */
+        body { font-family: 'Inter', sans-serif; background-color: #f5f5f7; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #1d1d1f; }
+        .login-wrapper { width: 100%; max-width: 420px; padding: 20px; animation: fadeInUp 0.6s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .brand-header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 2rem; font-weight: 800; color: #1d1d1f; text-decoration: none; letter-spacing: -1px; display: inline-flex; align-items: center; gap: 10px; }
+        .logo-dot { width: 10px; height: 10px; background-color: #25D366; border-radius: 50%; box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+        .subtitle { color: #86868b; font-size: 1rem; margin-top: 5px; }
+
+        .login-box { background: #fff; border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.02); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #1d1d1f; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid #d2d2d7; border-radius: 12px; font-size: 1rem; outline: none; transition: all 0.2s; box-sizing: border-box; background-color: #fbfbfd; }
+        .input-group input:focus { border-color: #007aff; background-color: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
+
+        .btn-submit { width: 100%; background: linear-gradient(135deg, #007aff, #0062cc); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4); }
+        
+        .google-btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 14px; border: 1px solid #d2d2d7; border-radius: 12px; background: white; color: #1d1d1f; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.2s; box-sizing: border-box; font-size: 0.95rem; }
+        .google-btn:hover { background: #f5f5f7; border-color: #c7c7cc; }
+
+        .divider { display: flex; align-items: center; color: #86868b; font-size: 0.8rem; margin: 25px 0; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e5e5e5; }
+        .divider::before { margin-right: 10px; } .divider::after { margin-left: 10px; }
+
+        .footer-link { text-align: center; margin-top: 30px; font-size: 0.9rem; color: #86868b; }
+        .footer-link a { color: #007aff; text-decoration: none; font-weight: 500; cursor: pointer; }
+        
+        .error-msg { background: #ffe5e5; color: #d32f2f; padding: 10px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px; display: none; text-align: center; border: 1px solid #ffcdd2; }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        
+        <div class="brand-header">
+            <a href="index.html" class="logo">
+                <span class="logo-dot"></span> TonBot
+            </a>
+            <p class="subtitle" id="page-title">Giriş yapın veya hesap oluşturun.</p>
+        </div>
+
+        <div class="login-box">
+            <div id="error-text" class="error-msg"></div>
+
+            <form id="auth-form">
+                <div class="input-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="email" placeholder="ornek@sirket.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="main-btn">Giriş Yap</button>
+            </form>
+
+            <div class="divider">VEYA</div>
+
+            <button type="button" onclick="googleGiris()" class="google-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google ile Devam Et
+            </button>
+        </div>
+
+        <div class="footer-link">
+            <span id="footer-text">Hesabın yok mu?</span> 
+            <a onclick="modDegistir()" id="toggle-btn">Kayıt Ol</a><br><br>
+            <a href="index.html" style="color:#86868b; font-size:0.85rem;">← Ana Sayfaya Dön</a>
+        </div>
+    </div>
+
+    <script>
+        // --- SUPABASE AYARLARI ---
+        const SUPABASE_URL = 'https://tpfhsssmwofmhexrumuf.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwZmhzc3Ntd29mbWhleHJ1bXVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwNjE3NzcsImV4cCI6MjA3OTYzNzc3N30.WsHggU4XRLgkuh6b5XAgivDlvCxdHJEE2tzsad5-Dhk';
+        // -------------------------
+
+        // Kütüphane çakışmasını önlemek için değişken adını değiştirdim
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let isLoginMode = true;
+
+        // Sayfa yüklendiğinde Listener ekle (Daha güvenli)
+        document.getElementById('auth-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Sayfanın yenilenmesini engelle
+            islemYap();
+        });
+
+        function modDegistir() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('page-title').innerText = isLoginMode ? "Giriş yapın." : "Yeni hesap oluşturun.";
+            document.getElementById('main-btn').innerText = isLoginMode ? "Giriş Yap" : "Ücretsiz Kayıt Ol";
+            document.getElementById('footer-text').innerText = isLoginMode ? "Hesabın yok mu?" : "Zaten hesabın var mı?";
+            document.getElementById('toggle-btn').innerText = isLoginMode ? "Kayıt Ol" : "Giriş Yap";
+            document.getElementById('error-text').style.display = 'none';
+        }
+
+        async function islemYap() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('main-btn');
+            const errorDiv = document.getElementById('error-text');
+
+            btn.innerText = "İşlem Yapılıyor...";
+            btn.disabled = true;
+            errorDiv.style.display = 'none';
+
+            try {
+                let result;
+                if (isLoginMode) {
+                    // Giriş Yap
+                    result = await supabaseClient.auth.signInWithPassword({ email, password });
+                } else {
+                    // Kayıt Ol
+                    result = await supabaseClient.auth.signUp({ email, password });
+                }
+
+                if (result.error) throw result.error;
+
+                // Kayıt oldu ama email onayı gerekebilir
+                if (!isLoginMode && result.data.user && !result.data.session) {
+                    alert("Başarılı! Lütfen e-postanıza gelen onay linkine tıklayın.");
+                    btn.innerText = "Onay Bekleniyor";
+                    return;
+                }
+
+                girisBasarili(result.data.user);
+
+            } catch (error) {
+                console.error(error);
+                btn.innerText = isLoginMode ? "Giriş Yap" : "Kayıt Ol";
+                btn.disabled = false;
+                errorDiv.innerText = "Hata: " + (error.message === "Invalid login credentials" ? "Hatalı e-posta veya şifre." : error.message);
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        async function googleGiris() {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/setup.html' // Giriş yapınca buraya dönsün
+                    }
+                });
+                if (error) throw error;
+            } catch (error) {
+                alert("Google Hatası: " + error.message);
+            }
+        }
+
+        function girisBasarili(user) {
+            localStorage.setItem('tonbot_user', JSON.stringify(user));
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan') || 'starter';
+
+            const btn = document.getElementById('main-btn');
+            btn.innerText = "Başarılı! Yönlendiriliyor...";
+            btn.style.background = "#25D366";
+
+            setTimeout(() => {
+                window.location.href = `setup.html?plan=${plan}`;
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>
