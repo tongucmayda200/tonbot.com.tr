@@ -8,87 +8,73 @@
     <link rel="stylesheet" href="Style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
     <style>
-        /* --- SETUP SAYFASINA ÖZEL STİLLER --- */
-        body { background-color: #f5f5f7; padding-top: 80px; min-height: 100vh; display: flex; flex-direction: column; }
-
-        /* Header (Sadece Logo - Çıkış Butonu yok, odakta kalsın) */
-        .setup-header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 100;
-        }
+        /* --- STİLLER --- */
+        body { background-color: #f5f5f7; padding-top: 90px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; font-family: 'Inter', sans-serif; }
+        .setup-header { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 1000; }
         .brand-logo { font-size: 1.5rem; font-weight: 800; color: #1D1D1F; text-decoration: none; display: flex; align-items: center; gap: 8px; }
         .logo-dot { width: 10px; height: 10px; background-color: #25D366; border-radius: 50%; }
+        .btn-logout { background: transparent; border: 1px solid #ddd; color: #666; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
+        .btn-logout:hover { border-color: #d32f2f; color: #d32f2f; background: #fff5f5; }
 
-        /* Ana Kutu */
-        .wizard-container {
-            width: 90%; max-width: 700px; margin: 40px auto; 
-            background: white; border-radius: 24px; padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02);
-        }
+        .wizard-container { width: 90%; max-width: 650px; background: white; border-radius: 24px; padding: 50px 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.02); animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* İlerleme Çubuğu */
+        /* Progress Bar */
         .progress-bar { display: flex; justify-content: space-between; margin-bottom: 40px; position: relative; }
-        .progress-line { position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e5e5e5; z-index: 0; }
-        .step { position: relative; z-index: 1; text-align: center; width: 33%; }
-        .step-circle { 
-            width: 32px; height: 32px; background: #e5e5e5; border-radius: 50%; margin: 0 auto 10px; 
-            display: flex; align-items: center; justify-content: center; font-weight: bold; color: #888; font-size: 0.9rem; transition: 0.3s;
-        }
-        .step-text { font-size: 0.85rem; color: #888; font-weight: 500; }
+        .progress-line { position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #f0f0f0; z-index: 0; }
+        .step { position: relative; z-index: 1; text-align: center; flex: 1; }
         
-        /* Aktif Adım Stili */
-        .active .step-circle { background: #007aff; color: white; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2); }
-        .active .step-text { color: #007aff; font-weight: 600; }
+        .step-circle { width: 32px; height: 32px; background: #f0f0f0; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #999; font-size: 0.9rem; transition: 0.3s; border: 2px solid #fff; }
+        .step-text { font-size: 0.75rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .active .step-circle { background: #007aff; color: white; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); }
+        .active .step-text { color: #007aff; }
         .completed .step-circle { background: #25D366; color: white; }
+        .completed .step-text { color: #25D366; }
 
-        /* İçerik Alanları */
-        .step-content { display: none; animation: fadeIn 0.5s ease; }
-        .step-content.current { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* İçerik */
+        .step-content { display: none; }
+        .step-content.current { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        h2 { font-size: 1.8rem; margin-bottom: 10px; color: #1d1d1f; text-align: center; font-weight: 700; }
-        p { color: #86868b; text-align: center; margin-bottom: 30px; }
-
-        /* QR Alanı */
-        #qr-area { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; }
-        #qr-box { padding: 20px; background: white; border: 1px solid #eee; border-radius: 12px; }
-        .status-text { margin-top: 20px; font-weight: 600; color: #007aff; }
+        h2 { font-size: 1.8rem; margin-bottom: 10px; color: #1d1d1f; text-align: center; font-weight: 800; }
+        p { color: #86868b; text-align: center; margin-bottom: 30px; font-size: 1rem; }
 
         /* Form Elemanları */
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; color: #1d1d1f; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #333; }
         .form-input, .form-select, .form-textarea {
-            width: 100%; padding: 14px; border: 1px solid #d2d2d7; border-radius: 12px;
+            width: 100%; padding: 14px; border: 1px solid #d1d1d6; border-radius: 12px;
             font-size: 1rem; outline: none; font-family: 'Inter', sans-serif; box-sizing: border-box;
-            background-color: #fbfbfd; transition: 0.2s;
+            background-color: #fbfbfd; transition: all 0.2s;
         }
-        .form-input:focus, .form-textarea:focus { border-color: #007aff; background: white; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
-        .form-textarea { height: 150px; resize: vertical; }
+        .form-textarea { height: 180px; resize: vertical; }
 
         /* Butonlar */
         .btn-next {
             width: 100%; padding: 16px; background: #007aff; color: white; border: none;
             border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s;
-            margin-top: 10px;
+            margin-top: 20px; box-shadow: 0 4px 12px rgba(0,122,255,0.2);
         }
-        .btn-next:hover { background: #005ecb; transform: translateY(-2px); }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,122,255,0.3); }
 
-        /* Başarı Ekranı */
-        .success-icon { font-size: 4rem; display: block; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
+    <script>
+        const userCheck = localStorage.getItem('tonbot_user');
+        if (!userCheck) {
+            window.location.href = 'login.html'; 
+        }
+    </script>
+
     <header class="setup-header">
-        <a href="#" class="brand-logo">
+        <a href="index.html" class="brand-logo">
             <span class="logo-dot"></span> TonBot
         </a>
+        <button onclick="cikisYap()" class="btn-logout">Çıkış Yap</button>
     </header>
 
     <div class="wizard-container">
@@ -97,7 +83,7 @@
             <div class="progress-line"></div>
             <div class="step active" id="step-indicator-1">
                 <div class="step-circle">1</div>
-                <div class="step-text">Bağlantı</div>
+                <div class="step-text">Kimlik</div>
             </div>
             <div class="step" id="step-indicator-2">
                 <div class="step-circle">2</div>
@@ -105,31 +91,22 @@
             </div>
             <div class="step" id="step-indicator-3">
                 <div class="step-circle">3</div>
-                <div class="step-text">Bilgi</div>
+                <div class="step-text">Ödeme</div>
             </div>
         </div>
 
         <div id="step-1" class="step-content current">
-            <h2>WhatsApp'ı Bağla</h2>
-            <p>Telefonundan WhatsApp > Ayarlar > Bağlı Cihazlar menüsünü aç.</p>
-            
-            <input type="text" id="session-id" class="form-input" placeholder="İşletme Adı (Örn: butik_ayse)" style="text-align:center; margin-bottom:20px;">
-            
-            <button onclick="qrOlustur()" class="btn-next">QR Kod Oluştur</button>
-
-            <div id="qr-area" style="display:none;">
-                <div id="qr-box"></div>
-                <div class="status-text" id="status-msg">QR Bekleniyor...</div>
-            </div>
-        </div>
-
-        <div id="step-2" class="step-content">
-            <h2>Bot Kimliği</h2>
-            <p>Asistanınız müşterilerinize nasıl davransın?</p>
+            <h2>İşletme Kimliği</h2>
+            <p>Botunuzun adını ve konuşma tarzını belirleyin.</p>
 
             <div class="form-group">
+                <label>İşletme Adınız (Benzersiz Kimlik)</label>
+                <input type="text" id="session-id" class="form-input" placeholder="Örn: butik_ayse" required>
+            </div>
+            
+            <div class="form-group">
                 <label>Botun Adı</label>
-                <input type="text" id="bot-name" class="form-input" placeholder="Örn: Aslı, TonBot, Destek">
+                <input type="text" id="bot-name" class="form-input" placeholder="Örn: Aslı, Destek Ekibi" required>
             </div>
 
             <div class="form-group">
@@ -141,115 +118,125 @@
                 </select>
             </div>
 
-            <button onclick="adimGec(3)" class="btn-next">Devam Et →</button>
+            <button onclick="adimGec(2)" class="btn-next">Devam Et →</button>
+        </div>
+
+        <div id="step-2" class="step-content">
+            <h2>Bilgi Bankası 📚</h2>
+            <p>Ürünlerini, fiyatlarını ve linklerini buraya yapıştır. Bot buradan öğrenip cevap verecek.</p>
+
+            <div class="form-group">
+                <label>Eğitim Metni ve Linkler</label>
+                <textarea id="knowledge-base" class="form-textarea" placeholder="- Sen Yapay Zeka İşletmemiz İçin Ajansın 
+-Ürün linkleri bunlardır sadece müşteri sorarsa link ver ürün sorulursa ürünün linkini ve fiyatını at 
+link.com 500 TL
+link2.com 600 TL
+link3.com 700 TL
+link4.com 800 TL
+.
+.
+
+- Kargo: 1000 TL üzeri bedava.
+- Adres: Kadıköy Boğa heykeli yanı."></textarea>
+            </div>
+
+            <button onclick="veriyiGeciciKaydetVeOdeyeGec()" class="btn-next" style="background: #25D366; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">Ödemeye Geç →</button>
         </div>
 
         <div id="step-3" class="step-content">
-            <h2>Bilgi Bankası 📚</h2>
-            <p>Ürünlerini, fiyatlarını ve linklerini buraya yapıştır. Bot buradan öğrenir.</p>
-
-            <div class="form-group">
-                <textarea id="knowledge-base" class="form-textarea" placeholder="Örnek:
-- Kırmızı Elbise: 500 TL. Link: site.com/kirmizi
-- Kargo: 1000 TL üzeri bedava.
-- Adres: Kadıköy Boğa heykeli yanı.
-- İade: 14 gün içinde yapılabilir."></textarea>
+            <h2>Ödeme Bekleniyor...</h2>
+            <p>Ödeme başarılı olduktan sonra, kurulumunuz otomatik tamamlanacak ve QR kodunuz görünecektir.</p>
+            <div style="text-align:center; padding: 20px;">
+                <p>Lütfen ödeme sayfasını tamamlayın veya aşağıdaki butona tıklayın.</p>
+                <a href="login.html" class="btn-next" style="display:inline-block; width:auto; padding: 15px 40px; background:#007aff; text-decoration:none;">Ödeme Sayfasına Git</a>
             </div>
-
-            <button onclick="kaydetVeBitir()" class="btn-next" style="background-color: #25D366;">Kaydet ve Başlat 🚀</button>
-        </div>
-
-        <div id="step-success" class="step-content" style="text-align: center;">
-            <span class="success-icon">🎉</span>
-            <h2 style="color: #25D366;">Kurulum Tamamlandı!</h2>
-            <p>Botunuz şu an aktif ve mesajlara cevap veriyor.</p>
-            <a href="https://wa.me/" target="_blank" class="btn-next" style="display:inline-block; width:auto; padding: 15px 40px; text-decoration: none;">Test Et</a>
         </div>
 
     </div>
 
     <script>
-        const socket = io(); 
+        // Kütüphane yüklemeleri (Socket/QR) bu sayfadan kaldırıldı
+        let currentUserId = null;
         let currentSessionId = "";
 
-        // --- ADIM 1: QR ---
-        function qrOlustur() {
-            const sid = document.getElementById('session-id').value;
-            if(!sid) return alert("Lütfen bir isim girin (Örn: butik_1)");
-            
-            currentSessionId = sid;
-            
-            // Butonu gizle, QR alanını aç
-            document.querySelector('button[onclick="qrOlustur()"]').style.display = 'none';
-            document.getElementById('qr-area').style.display = 'flex';
 
-            // Backend'e Sinyal Gönder
-            socket.emit('start_session', { sessionId: currentSessionId });
+        // 1. GÜVENLİK KONTROLÜ
+        const userStr = localStorage.getItem('tonbot_user');
+        if (!userStr) {
+            window.location.href = 'login.html'; 
+        } else {
+            const userObj = JSON.parse(userStr);
+            currentUserId = userObj.id; // Supabase User ID
         }
-
-        // QR Gelince
-        socket.on('qr', (qrCode) => {
-            document.getElementById('qr-box').innerHTML = "";
-            new QRCode(document.getElementById('qr-box'), { text: qrCode, width: 220, height: 220 });
-            document.getElementById('status-msg').innerText = "Lütfen WhatsApp'tan Okutun";
-        });
-
-        // Bağlanınca -> Otomatik 2. Adıma Geç
-        socket.on('status', (msg) => {
-            if(msg === 'connected') {
-                adimGec(2);
-            }
-        });
 
         // --- ADIM GEÇİŞLERİ ---
         function adimGec(adimNo) {
-            // Tüm içerikleri gizle
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('current'));
-            // İstenen adımı göster
             document.getElementById(`step-${adimNo}`).classList.add('current');
 
-            // Üstteki çubuğu güncelle
             document.querySelectorAll('.step').forEach((el, index) => {
-                if (index + 1 < adimNo) el.classList.add('completed'); // Geçilenler yeşil
-                if (index + 1 === adimNo) el.classList.add('active'); // Şu anki mavi
+                if (index + 1 < adimNo) el.classList.add('completed');
+                if (index + 1 === adimNo) el.classList.add('active');
             });
         }
+        
+        function cikisYap() {
+            localStorage.removeItem('tonbot_user');
+            window.location.href = 'login.html';
+        }
 
-        // --- KAYDETME (BACKEND BAĞLANTISI) ---
-        async function kaydetVeBitir() {
+
+        // --- VERİ TOPLAMA VE ÖDEMEYE YÖNLENDİRME (STEP 2'NİN SONU) ---
+        function veriyiGeciciKaydetVeOde() {
+            const sessionIdInput = document.getElementById('session-id').value.trim();
             const botName = document.getElementById('bot-name').value;
             const botTone = document.getElementById('bot-tone').value;
             const knowledge = document.getElementById('knowledge-base').value;
 
-            // Yapay Zeka için Promptu Birleştir
-            const finalPrompt = `Senin adın ${botName}. Tonun ${botTone} olacak. İşte bilmen gerekenler:\n\n${knowledge}`;
-
-            const btn = document.querySelector('#step-3 .btn-next');
-            const originalText = btn.innerText;
-            btn.innerText = "Kaydediliyor...";
-
-            try {
-                const response = await fetch('/api/save-settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        session_id: currentSessionId, 
-                        prompt: finalPrompt 
-                    })
-                });
-
-                if(response.ok) {
-                    adimGec('success'); // Başarı ekranına git
-                } else {
-                    alert("Hata oluştu. Lütfen tekrar deneyin.");
-                    btn.innerText = originalText;
-                }
-            } catch (e) {
-                console.error(e);
-                alert("Sunucu hatası!");
-                btn.innerText = originalText;
+            // Alan Kontrolü
+            if (!sessionIdInput.trim() || !botName.trim()) {
+                return alert("Lütfen İşletme Adı ve Bot Adını doldurun!");
             }
+            
+            // 1. Veri Paketini Hazırla
+            const configData = {
+                session_id: sessionIdInput.toLowerCase().replace(/ /g, '_'),
+                user_id: currentUserId,
+                bot_name: botName,
+                bot_tone: botTone,
+                knowledge: knowledge
+            };
+            
+            // 2. Geçici Hafızaya Kaydet (Setup2'de çekilecek)
+            sessionStorage.setItem('bot_config_pending', JSON.stringify(configData));
+            
+            // 3. Ödeme Sayfasına Yönlendir
+            // (Pricing'den gelen plan bilgisini de taşıyabilirsin)
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan') || 'pro'; 
+
+            // ÖNEMLİ: Bu, LemonSqueezy/Stripe gibi bir platforma yönlendirecek
+            // Başarılı ödemeden sonra bu platform seni setup2.html'e geri atmalı.
+            alert("Bilgileriniz kaydedildi. Ödeme sayfasına yönlendiriliyor...");
+
+            // Şu an elimizde gerçek ödeme linki olmadığı için setup2'ye yönlendiriyoruz.
+            window.location.href = `setup2.html?plan=${plan}&session_id=${configData.session_id}`;
         }
+
+
+        // Sayfa açıldığında varsayılan olarak Adım 1'i göster
+        window.addEventListener('DOMContentLoaded', () => {
+             // Eğer URL'de session ID varsa (yani ödeme sonrası dönüldüyse)
+             const urlParams = new URLSearchParams(window.location.search);
+             if (urlParams.get('session_id') && urlParams.get('status') === 'paid') {
+                 // Eğer bu senaryo gerçekleşirse, kullanıcıyı direkt Setup2'ye atardık
+                 // Ama şu anki flow'da setup.html sadece veri topladığı için, bu kontrolü basit tutuyoruz.
+             }
+
+             // İlk adımı göster
+             adimGec(1);
+        });
+
     </script>
 
 </body>
