@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gizlilik Politikası - TonBot</title>
+    
+    <link rel="stylesheet" href="Style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- GENEL TASARIM UYUMU --- */
+        :root {
+            --primary: #007aff;
+            --text-dark: #1d1d1f;
+            --text-grey: #424245; 
+            --bg-light: #fbfbfd;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding-top: 80px;
+            background-color: #f7f7f9; 
+            color: var(--text-dark);
+            line-height: 1.65;
+        }
+
+        /* Navigasyon Stilleri */
+        .sticky-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; box-shadow: 0 1px 0px rgba(0,0,0,0.05);
+            z-index: 1000; box-sizing: border-box;
+        }
+        .brand-logo { font-size: 1.8rem; font-weight: 800; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+        .logo-dot { width: 10px; height: 10px; background-color: #25D366; border-radius: 50%; animation: pulse 2s infinite; }
+        .nav-buttons a {
+            text-decoration: none; font-weight: 600; font-size: 0.95rem; padding: 10px 24px; border-radius: 50px;
+            color: var(--text-dark); transition: 0.2s;
+        }
+        .nav-buttons a:hover { color: var(--primary); background: rgba(0,122,255,0.05); }
+
+
+        /* İÇERİK ALANI */
+        .content-wrapper {
+            max-width: 900px;
+            margin: 50px auto 100px;
+            background: white;
+            padding: 60px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+
+        /* BAŞLIK STİLLERİ */
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; color: var(--primary); }
+        h2 { font-size: 1.6rem; font-weight: 700; margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        h3 { font-size: 1.2rem; font-weight: 600; margin-top: 25px; margin-bottom: 10px; color: var(--text-dark); }
+        p, li { color: var(--text-grey); font-size: 1rem; margin-bottom: 15px; }
+        
+        strong { color: var(--text-dark); }
+
+        /* LİSTE STİLİ */
+        ul { list-style: disc; margin-left: 20px; padding-left: 0; }
+        
+        /* ÖNEMLİ UYARI */
+        .legal-warning {
+            padding: 15px;
+            border-left: 4px solid #ffcc00;
+            background-color: #fff8e1;
+            margin: 30px 0;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper { padding: 30px; margin-top: 20px; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky-header">
+        <a href="index.html" class="brand-logo">
+            <span class="logo-dot"></span> TonBot
+        </a>
+        <div class="nav-buttons">
+            <a href="pricing.html" class="nav-btn">Paketler</a>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <h1>Gizlilik Politikası</h1>
+        <p><strong>Yürürlük Tarihi:</strong> 27 Kasım 2025</p>
+
+        <div class="legal-warning">
+            TonBot olarak kişisel verilerinize azami hassasiyet göstermekteyiz. Verileriniz, yasal yükümlülükler ve Hizmet Şartları çerçevesinde işlenir.
+        </div>
+
+        <h2>1. VERİ SORUMLUSU VE İLETİŞİM</h2>
+
+        <h3>1.1 Veri Sorumlusu</h3>
+        <p>Bu politika kapsamında veri sorumlusu, **TonBot Teknoloji Hizmetleri**'dir.</p>
+
+        <h3>1.2 İletişim</h3>
+        <p>Gizlilik ile ilgili tüm sorularınız için bize şu adresten ulaşabilirsiniz: <strong>support@tonbot.com.tr</strong></p>
+
+        <h2>2. TOPLANAN KİŞİSEL VERİLER</h2>
+
+        <p>Hizmetlerimizi kullanmanız sırasında aşağıdaki kişisel ve işletme verilerini toplarız:</p>
+        <ul>
+            <li><strong>Kimlik ve İletişim:</strong> E-posta adresi, (Google ile giriş yapıldıysa Adınız/Soyadınız).</li>
+            <li><strong>Hesap ve Abonelik Verisi:</strong> Supabase Kullanıcı ID'si (UUID), Ödeme Planı, Hesap Aktiflik Durumu.</li>
+            <li><strong>Bot Kimlik Verisi:</strong> Müşteri tarafından atanan İşletme Kimliği (<code>session_id</code>) ve Botun Adı.</li>
+            <li><strong>Teknik Veriler:</strong> IP adresi, oturum verisi ve tarayıcı bilgileri (Hizmet güvenliği için).</li>
+        </ul>
+
+        <h2>3. WHATSAPP VE MESAJ İÇERİĞİNİN İŞLENMESİ (KVKK) 🛑</h2>
+
+        <p>WhatsApp'a bağlanan otomasyon sistemimiz benzersiz bir yapıya sahiptir:</p>
+        
+        <h3>3.1 Mesaj İçeriği</h3>
+        <p>Hizmetin temel amacı olan yapay zeka cevapları üretilebilmesi için, WhatsApp üzerinden gelen mesajların **metinsel içeriği** sunucumuza ulaşır. Bu içerik, analiz edilmek ve cevap üretmek üzere anlık olarak **Yapay Zeka Servislerine (Gemini/OpenAI)** aktarılır.</p>
+        
+        <h3>3.2 Veri Aktarımı ve Rıza</h3>
+        <p>Kullanıcılar, mesaj içeriklerinin AI tarafından işlenmek üzere yurtdışı merkezli Yapay Zeka Servislerine (Google, OpenAI) aktarılmasına ve işlenmesine açık rıza gösterir.</p>
+
+        <h3>3.3 Veri Saklama</h3>
+        <p>Mesaj içerikleri, **sohbet geçmişi (Conversation Memory)** ve botun daha iyi cevap verebilmesi için, hizmet aktif olduğu sürece şifreli veritabanımızda (Supabase) saklanır. Kullanıcının hizmeti sonlandırması veya veri silme talebinde bulunması durumunda bu veriler silinir.</p>
+
+        <h2>4. VERİ AKTARIMI VE ÜÇÜNCÜ TARAFLAR</h2>
+
+        <p>Toplanan veriler, aşağıdaki üçüncü taraflarla ve amaçlarla paylaşılabilir:</p>
+        <ul>
+            <li><strong>Yapay Zeka Sağlayıcıları:</strong> (Gemini/Google, OpenAI) Mesajların işlenmesi ve cevap üretilmesi.</li>
+            <li><strong>Veritabanı ve Hosting:</strong> (Supabase, AWS/EC2) Verilerin güvenli barındırılması ve işlenmesi.</li>
+            <li><strong>Yasal Yükümlülükler:</strong> Yasal mercilerin talep etmesi durumunda (Mahkeme kararı, savcılık talebi vb.).</li>
+        </ul>
+
+        <h2>5. KULLANICI HAKLARI VE GÜVENLİK</h2>
+
+        <h3>5.1 Veri Güvenliği</h3>
+        <p>Verilerinizi korumak için AWS (Amazon Web Services) altyapısı, SSL (HTTPS) şifrelemesi ve yetkisiz erişimi engellemek için kimlik doğrulama protokolleri kullanmaktayız. Şifreleriniz, geri döndürülemez yöntemlerle (Hashing) şifrelenmiş olarak saklanır.</p>
+
+        <h3>5.2 Haklarınız (KVKK Kapsamında)</h3>
+        <p>Kullanıcı olarak, verileriniz üzerinde her zaman kontrol hakkına sahipsiniz. Şunları talep edebilirsiniz:</p>
+        <ul>
+            <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme.</li>
+            <li>Verilerinizin düzeltilmesini veya silinmesini talep etme.</li>
+            <li>Veri işleme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme.</li>
+        </ul>
+        <p>Bu hakları kullanmak için lütfen knightmayda@gmail.com adresinden bize ulaşın.</p>
+
+    </div>
+
+    <footer style="text-align:center; padding:50px; color:#999; font-size:0.95rem; background: #fbfbfd; border-top: 1px solid #eaeaea;">
+        <p>&copy; 2025 TonBot Teknoloji Hizmetleri. Tüm hakları saklıdır.</p>
+    </footer>
+
+</body>
+</html>
